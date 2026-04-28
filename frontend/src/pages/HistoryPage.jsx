@@ -52,43 +52,46 @@ const HistoryPage = () => {
         <p className="subtitle">Track your income and expenses across accounts</p>
       </header>
 
-      <div className="filter-section glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <label style={{ fontWeight: '500', color: 'var(--text-secondary)' }}>Select Account:</label>
+      <div className="filter-section card-panel" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <label style={{ fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--on-surface-variant)' }}>Select Account:</label>
         <select 
-          className="glass-input" 
-          style={{ width: 'auto', minWidth: '200px' }}
+          className="input-field" 
+          style={{ width: 'auto', minWidth: '250px' }}
           value={selectedAccount}
           onChange={handleAccountChange}
         >
           <option value="">Select an account</option>
-          {accounts.map(a => <option key={a.account_id} value={a.account_id}>#{a.account_id} ({a.account_type})</option>)}
+          {accounts.map(a => <option key={a.account_id} value={a.account_id}>#{a.account_id} ({a.account_type.toUpperCase()})</option>)}
         </select>
       </div>
 
-      <div className="history-table-container glass-panel" style={{ padding: '1rem' }}>
+      <div className="history-table-container card-panel" style={{ padding: '0', overflow: 'hidden' }}>
         {loading ? (
-          <p style={{ padding: '2rem', textAlign: 'center' }}>Loading history...</p>
+          <div style={{ padding: '4rem', textAlign: 'center' }}>
+            <div className="loading-screen" style={{ height: 'auto' }}></div>
+            <p style={{ marginTop: '1rem', color: 'var(--on-surface-variant)' }}>Fetching history...</p>
+          </div>
         ) : (
-          <table className="custom-table">
-            <thead>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead style={{ backgroundColor: 'var(--background)', borderBottom: '1px solid var(--outline-variant)' }}>
               <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Details</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th style={{ textAlign: 'left', padding: '1.25rem 1.5rem', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>Date</th>
+                <th style={{ textAlign: 'left', padding: '1.25rem 1.5rem', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>Type</th>
+                <th style={{ textAlign: 'left', padding: '1.25rem 1.5rem', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>Details</th>
+                <th style={{ textAlign: 'left', padding: '1.25rem 1.5rem', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>Amount</th>
+                <th style={{ textAlign: 'left', padding: '1.25rem 1.5rem', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map(t => (
-                <tr key={t.transaction_id}>
-                  <td>{new Date(t.created_at).toLocaleDateString()}</td>
-                  <td>
+                <tr key={t.transaction_id} style={{ borderBottom: '1px solid var(--outline-variant)' }}>
+                  <td style={{ padding: '1.25rem 1.5rem', fontSize: '0.9rem' }}>{new Date(t.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                  <td style={{ padding: '1.25rem 1.5rem' }}>
                     <span className={`badge ${t.transaction_type === 'deposit' ? 'badge-success' : t.transaction_type === 'withdraw' ? 'badge-error' : 'badge-primary'}`}>
                       {t.transaction_type}
                     </span>
                   </td>
-                  <td style={{ fontSize: '0.9rem' }}>
+                  <td style={{ padding: '1.25rem 1.5rem', fontSize: '0.9rem', color: 'var(--secondary)', fontWeight: '500' }}>
                     {t.from_account && t.to_account ? (
                       <span>#{t.from_account} → #{t.to_account}</span>
                     ) : t.transaction_type === 'deposit' ? (
@@ -97,11 +100,11 @@ const HistoryPage = () => {
                       <span>Cash Withdrawal</span>
                     )}
                   </td>
-                  <td style={{ fontWeight: '700', color: t.transaction_type === 'deposit' ? 'var(--success)' : 'var(--text-primary)' }}>
-                    {t.transaction_type === 'deposit' ? '+' : '-'}${parseFloat(t.amount).toLocaleString()}
+                  <td style={{ padding: '1.25rem 1.5rem', fontWeight: '700', color: t.transaction_type === 'deposit' ? 'var(--success)' : 'var(--secondary)' }}>
+                    {t.transaction_type === 'deposit' ? '+' : '-'}₹{parseFloat(t.amount).toLocaleString()}
                   </td>
-                  <td>
-                    <span className={`badge ${t.status === 'completed' ? 'badge-success' : 'badge-warning'}`}>
+                  <td style={{ padding: '1.25rem 1.5rem' }}>
+                    <span className={`badge ${t.status === 'completed' ? 'badge-success' : 'badge-primary'}`} style={{ opacity: t.status === 'completed' ? 1 : 0.6 }}>
                       {t.status}
                     </span>
                   </td>
@@ -109,7 +112,10 @@ const HistoryPage = () => {
               ))}
               {transactions.length === 0 && (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '4rem', color: 'var(--on-surface-variant)' }}>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
                     No transactions found for this account.
                   </td>
                 </tr>

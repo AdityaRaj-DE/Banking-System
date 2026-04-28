@@ -1,248 +1,328 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .dashboard-header h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
+  color: var(--secondary);
 }
 
-.dashboard-header p {
-  color: var(--text-secondary);
-}
-
-.summary-section {
-  margin-bottom: 3rem;
-}
-
-.summary-card {
-  padding: 2rem;
-  max-width: 420px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(30,41,59,0.7), rgba(15,23,42,0.9));
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-
-.summary-label {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.summary-value {
-  font-size: 3rem;
-  font-weight: 800;
-  margin: 0.5rem 0 1.5rem;
-  background: linear-gradient(135deg, #38bdf8, #6366f1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
-}
-.summary-footer {
+.dashboard-top-nav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 2rem;
+  border-bottom: 1px solid var(--outline-variant);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.summary-info {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.accounts-section h3 {
-  font-size: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.accounts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.account-card {
-  padding: 1.5rem;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(30,41,59,0.6), rgba(15,23,42,0.9));
-  transition: all 0.3s ease;
+.nav-tab {
+  padding: 0.5rem 0;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
   cursor: pointer;
 }
 
-.account-card:hover {
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-.account-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.account-id {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-family: monospace;
-}
-
-.balance-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.account-balance {
-  font-size: 1.9rem;
-  font-weight: 700;
-  margin-top: 0.25rem;
-}
-
-
-.account-card-footer {
-  margin-top: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.status-dot.active { background: var(--success); }
-.status-dot.blocked { background: var(--warning); }
-.status-dot.closed { background: var(--error); }
-
-.status-text {
-  font-size: 0.8rem;
-  text-transform: capitalize;
-  color: var(--text-secondary);
-}
-
-.empty-state {
-  padding: 3rem;
-  text-align: center;
-  color: var(--text-secondary);
-}
-
-.skeleton {
-  height: 120px;
-  border-radius: 16px;
-  background: linear-gradient(90deg, #1e293b, #334155, #1e293b);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: 200px 0; }
-}
-
-.dashboard-header h1 {
-  background: linear-gradient(135deg, #fff, #38bdf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* 💳 DEBIT CARD UI */
-.debit-card {
-  padding: 1.5rem;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #1e293b, #020617);
-  color: white;
-  position: relative;
-  overflow: hidden;
-  transition: 0.3s ease;
-}
-
-.debit-card::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(56,189,248,0.2), transparent 60%);
-  top: -50%;
-  left: -50%;
-}
-
-.debit-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-/* Layout */
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.bank-name {
+.nav-tab.active {
+  color: var(--primary);
   font-weight: 600;
 }
 
-.card-type {
-  text-transform: uppercase;
-  font-size: 0.75rem;
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary);
 }
 
-/* Card number */
-.card-number {
-  margin: 1.5rem 0;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-  font-family: monospace;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
 }
 
-/* Balance */
-.card-balance {
-  font-size: 1.5rem;
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Balance Card */
+.balance-card {
+  background-color: var(--primary-container);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.balance-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(transparent, rgba(77, 68, 181, 0.1));
+  mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path d="M0,160L48,176C96,192,192,224,288,224C384,224,480,192,576,165.3C672,139,768,117,864,128C960,139,1056,181,1152,197.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="blue"></path></svg>');
+  mask-repeat: no-repeat;
+  mask-size: cover;
+  opacity: 0.3;
+}
+
+.balance-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--on-primary-container);
+  margin-bottom: 0.5rem;
+}
+
+.balance-amount {
+  font-size: 2.5rem;
   font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* Footer */
-.card-footer {
-  margin-top: 1.5rem;
+.balance-trend {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(1, 87, 1, 0.1);
+  color: var(--success);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+/* Quick Actions */
+.quick-actions-card {
+  padding: 1.5rem;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background-color: var(--background);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
+  color: var(--secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.action-btn:hover {
+  background-color: var(--primary-container);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.action-icon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Accounts Section */
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
-.card-holder {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  opacity: 0.8;
+.view-all {
+  font-size: 0.875rem;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-/* 💳 CHIP DESIGN */
-.card-chip {
-  width: 40px;
-  height: 28px;
-  background: linear-gradient(135deg, #d4af37, #facc15);
-  border-radius: 6px;
-  margin-top: 1rem;
+.accounts-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
 }
 
-/* 💠 VISA LOGO */
-.card-brand {
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 1px;
+.account-mini-card {
+  min-width: 280px;
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.account-mini-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.account-mini-card.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
   color: white;
-  opacity: 0.9;
 }
 
-/* Optional glow */
-.card-brand::after {
-  content: '';
+.account-mini-card.active .account-type-label {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Improve spacing */
-.card-number {
-  margin-top: 1rem;
+.account-mini-card.active h4 {
+  color: white;
 }
+
+.account-type-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.account-mini-card h4 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Transactions List */
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.transaction-info {
+  flex: 1;
+}
+
+.transaction-title {
+  font-weight: 600;
+  color: var(--secondary);
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+}
+
+.transaction-amount {
+  font-weight: 700;
+  text-align: right;
+}
+
+.amount-positive { color: var(--success); }
+.amount-negative { color: var(--on-surface); }
+
+/* Progress Widget */
+.progress-widget {
+  padding: 1.5rem;
+}
+
+.progress-item {
+  margin-top: 1.25rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--background);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 4px;
+}
+
+.inflow { background-color: var(--success); }
+.outflow { background-color: var(--primary); }
+
+/* Premium Card */
+.premium-card {
+  background-color: var(--secondary);
+  color: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.premium-card h4 { color: white; margin-bottom: 0.5rem; }
+.premium-card p { font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); line-height: 1.5; }

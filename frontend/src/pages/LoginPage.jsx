@@ -27,11 +27,11 @@ const LoginPage = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card glass-panel fade-in">
+      <div className="auth-card card-panel fade-in">
         <div className="auth-header">
-          <div className="logo-icon">NB</div>
-          <h1>Welcome Back</h1>
-          <p>Enter your credentials to access your account</p>
+          <div className="logo-icon">P</div>
+          <h1>Prosper Bank</h1>
+          <p>Sign in to manage your prosperity</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -41,7 +41,7 @@ const LoginPage = () => {
             <label>Email Address</label>
             <input 
               type="email" 
-              className="glass-input" 
+              className="input-field" 
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -52,7 +52,7 @@ const LoginPage = () => {
             <label>Password</label>
             <input 
               type="password" 
-              className="glass-input" 
+              className="input-field" 
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -60,12 +60,12 @@ const LoginPage = () => {
             />
           </div>
           <button type="submit" className="primary-btn auth-btn" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login to Account'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
+          <p>Don't have an account? <Link to="/register">Create Account</Link></p>
         </div>
       </div>
     </div>

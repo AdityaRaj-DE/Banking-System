@@ -1,22 +1,25 @@
-
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .db-tools, .audit-logs {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .db-tools h3, .audit-logs h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #fcf8f8; /* bright blue */
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--secondary);
 }
 
 .tool-buttons {
@@ -27,12 +30,16 @@
 .status-msg {
   font-size: 0.85rem;
   color: var(--success);
+  font-weight: 600;
 }
 
 .query-analyzer h4 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-bottom: 1rem;
-  color: var(--text-secondary);
+  color: var(--on-surface-variant);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .query-analyzer form {
@@ -42,18 +49,20 @@
 }
 
 .query-analyzer textarea {
-  height: 100px;
+  height: 120px;
   resize: vertical;
-  font-family: monospace;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
 }
 
 .query-result {
   margin-top: 1rem;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
+  background-color: var(--secondary);
+  color: #a5f791;
+  border-radius: var(--radius-md);
   font-size: 0.75rem;
-  max-height: 200px;
+  max-height: 300px;
   overflow: auto;
 }
 
@@ -61,58 +70,45 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: 600px;
-  overflow-y: auto;
 }
 
 .log-item {
   padding: 1rem;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
+  background-color: var(--background);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.log-item:hover {
+  border-color: var(--primary);
+  background-color: var(--surface);
 }
 
 .log-time {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.log-action {
-  color: #ebeeef; /* darker + visible */
+  color: var(--on-surface-variant);
   font-weight: 600;
 }
 
+.log-action {
+  color: var(--primary);
+  font-weight: 700;
+}
+
 .log-table {
-  color: var(--text-secondary);
+  color: var(--on-surface-variant);
 }
 
 .log-user {
   margin-left: auto;
   font-family: monospace;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.1rem 0.4rem;
-  border-radius: 0.25rem;
-}
-
-
-.admin-page h1 {
-  color: #ffffff;
-}
-
-.admin-page p {
-  color: #94a3b8;
-}
-
-/* FIX ADMIN HEADER VISIBILITY */
-.page-header h1 {
-  color: #f9f9fb;
-  font-weight: 700;
-}
-
-.subtitle {
-  color: #94a3b8;
-}
+  background-color: var(--primary-container);
+  color: var(--primary);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}

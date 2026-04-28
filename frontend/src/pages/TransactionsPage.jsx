@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import accountService from '../services/accountService';
 import transactionService from '../services/transactionService';
@@ -6,6 +7,7 @@ import './Transactions.css';
 
 const TransactionsPage = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [accounts, setAccounts] = useState([]);
   const [activeTab, setActiveTab] = useState('transfer');
   const [loading, setLoading] = useState(false);
@@ -16,7 +18,14 @@ const TransactionsPage = () => {
 
   useEffect(() => {
     if (user) fetchAccounts();
-  }, [user]);
+    
+    // Check for tab parameter in URL
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && ['transfer', 'deposit', 'withdraw'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [user, location]);
 
   const fetchAccounts = async () => {
     try {
@@ -86,7 +95,7 @@ const TransactionsPage = () => {
       <h1>Banking Actions</h1>
       <p className="subtitle">Move your money securely and instantly</p>
 
-      <div className="tab-container glass-panel">
+      <div className="tab-container card-panel">
         <div className="tabs">
           <button className={activeTab === 'transfer' ? 'active' : ''} onClick={() => setActiveTab('transfer')}>Transfer</button>
           <button className={activeTab === 'deposit' ? 'active' : ''} onClick={() => setActiveTab('deposit')}>Deposit</button>
@@ -95,7 +104,7 @@ const TransactionsPage = () => {
 
         <div className="tab-content">
           {accounts.length === 0 && !loading && (
-            <div className="auth-error" style={{ marginBottom: '1.5rem' }}>
+            <div className="badge badge-error" style={{ marginBottom: '1.5rem', width: '100%', textAlign: 'center', padding: '1rem' }}>
               No accounts found. Please create an account in the Dashboard first.
             </div>
           )}
@@ -104,15 +113,15 @@ const TransactionsPage = () => {
               <div className="form-group">
                 <label>From Account</label>
                 <select 
-                  className="glass-input" 
+                  className="input-field" 
                   value={transferData.from} 
                   onChange={e => setTransferData({...transferData, from: e.target.value})}
                   required
                 >
                   <option value="" disabled>Select Account</option>
                   {accounts.map(a => (
-                    <option key={a.account_id} value={a.account_id} style={{ background: '#0f172a', color: 'white' }}>
-                      #{a.account_id} - {a.account_type.toUpperCase()} (${(parseFloat(a.balance) || 0).toFixed(2)})
+                    <option key={a.account_id} value={a.account_id}>
+                      #{a.account_id} - {a.account_type.toUpperCase()} (₹{(parseFloat(a.balance) || 0).toLocaleString()})
                     </option>
                   ))}
                 </select>
@@ -121,7 +130,7 @@ const TransactionsPage = () => {
                 <label>Recipient Account ID</label>
                 <input 
                   type="number" 
-                  className="glass-input" 
+                  className="input-field" 
                   placeholder="Enter recipient account number"
                   value={transferData.to}
                   onChange={e => setTransferData({...transferData, to: e.target.value})}
@@ -132,14 +141,14 @@ const TransactionsPage = () => {
                 <label>Amount</label>
                 <input 
                   type="number" 
-                  className="glass-input" 
+                  className="input-field" 
                   placeholder="0.00"
                   value={transferData.amount}
                   onChange={e => setTransferData({...transferData, amount: e.target.value})}
                   required
                 />
               </div>
-              <button type="submit" className="primary-btn" disabled={loading}>
+              <button type="submit" className="primary-btn" disabled={loading} style={{ marginTop: '1rem' }}>
                 {loading ? 'Processing...' : 'Complete Transfer'}
               </button>
             </form>
@@ -148,15 +157,15 @@ const TransactionsPage = () => {
               <div className="form-group">
                 <label>Target Account</label>
                 <select 
-                  className="glass-input" 
+                  className="input-field" 
                   value={actionData.account_id} 
                   onChange={e => setActionData({...actionData, account_id: e.target.value})}
                   required
                 >
                   <option value="" disabled>Select Account</option>
                   {accounts.map(a => (
-                    <option key={a.account_id} value={a.account_id} style={{ background: '#0f172a', color: 'white' }}>
-                      #{a.account_id} - {a.account_type.toUpperCase()} (${(parseFloat(a.balance) || 0).toFixed(2)})
+                    <option key={a.account_id} value={a.account_id}>
+                      #{a.account_id} - {a.account_type.toUpperCase()} (₹{(parseFloat(a.balance) || 0).toLocaleString()})
                     </option>
                   ))}
                 </select>
@@ -165,14 +174,14 @@ const TransactionsPage = () => {
                 <label>Amount</label>
                 <input 
                   type="number" 
-                  className="glass-input" 
+                  className="input-field" 
                   placeholder="0.00"
                   value={actionData.amount}
                   onChange={e => setActionData({...actionData, amount: e.target.value})}
                   required
                 />
               </div>
-              <button type="submit" className="primary-btn" disabled={loading}>
+              <button type="submit" className="primary-btn" disabled={loading} style={{ marginTop: '1rem' }}>
                 {loading ? 'Processing...' : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Funds`}
               </button>
             </form>

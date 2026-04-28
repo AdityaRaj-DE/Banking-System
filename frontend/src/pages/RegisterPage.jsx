@@ -36,11 +36,11 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card glass-panel fade-in">
+      <div className="auth-card card-panel fade-in">
         <div className="auth-header">
-          <div className="logo-icon">NB</div>
-          <h1>Create Account</h1>
-          <p>Join Nexus Bank and start managing your finances</p>
+          <div className="logo-icon">P</div>
+          <h1>Join Prosper Bank</h1>
+          <p>Create an account to start your financial journey</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -50,7 +50,7 @@ const RegisterPage = () => {
             <label>Full Name</label>
             <input 
               name="name"
-              className="glass-input" 
+              className="input-field" 
               placeholder="John Doe"
               value={formData.name}
               onChange={handleChange}
@@ -62,7 +62,7 @@ const RegisterPage = () => {
             <input 
               name="email"
               type="email" 
-              className="glass-input" 
+              className="input-field" 
               placeholder="name@example.com"
               value={formData.email}
               onChange={handleChange}
@@ -74,32 +74,30 @@ const RegisterPage = () => {
             <input 
               name="password"
               type="password" 
-              className="glass-input" 
+              className="input-field" 
               placeholder="At least 6 characters"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Phone</label>
-              <input 
-                name="phone"
-                className="glass-input" 
-                placeholder="+1234567890"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input 
+              name="phone"
+              className="input-field" 
+              placeholder="+91 9876543210"
+              value={formData.phone}
+              onChange={handleChange}
+            />
           </div>
-          <button type="submit" className="primary-btn auth-btn" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+          <button type="submit" className="primary-btn auth-btn" disabled={loading} style={{ marginTop: '0.5rem' }}>
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>Already have an account? <Link to="/login">Login</Link></p>
+          <p>Already have an account? <Link to="/login">Sign In</Link></p>
         </div>
       </div>
     </div>
