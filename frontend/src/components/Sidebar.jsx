@@ -23,7 +23,7 @@ const Sidebar = () => {
           <span>History</span>
         </NavLink>
         
-        <div className="nav-separator">ADMIN</div>
+        
         <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
           <span>Admin Panel</span>
         </NavLink>
@@ -34,7 +34,9 @@ const Sidebar = () => {
         <div className="user-info">
           <div className="user-avatar">{user?.name?.charAt(0)}</div>
           <div className="user-details">
-            <p className="user-name">{user?.name}</p>
+            <p className="user-name">
+  {user?.name} <span className="user-role">(Admin)</span>
+</p>
             <p className="user-email">{user?.email}</p>
           </div>
         </div>

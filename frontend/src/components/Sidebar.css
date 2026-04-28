@@ -41,14 +41,14 @@
   align-items: center;
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  color: var(--text-secondary);
+  color: white;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .nav-item:hover {
   background: var(--glass);
-  color: var(--text-primary);
+  color: rgb(112, 25, 219);
 }
 
 .nav-item.active {
@@ -127,4 +127,12 @@
 .logout-btn:hover {
   background: var(--error);
   color: white;
+}
+
+
+.user-role {
+  font-size: 0.75rem;
+  color: #d7e0e4;
+  margin-left: 6px;
+  font-weight: 600;
 }

@@ -1,3 +1,5 @@
+
+
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -14,6 +16,7 @@
 .db-tools h3, .audit-logs h3 {
   font-size: 1.25rem;
   font-weight: 600;
+  color: #fcf8f8; /* bright blue */
 }
 
 .tool-buttons {
@@ -79,8 +82,8 @@
 }
 
 .log-action {
-  font-weight: 700;
-  color: var(--primary);
+  color: #ebeeef; /* darker + visible */
+  font-weight: 600;
 }
 
 .log-table {
@@ -93,4 +96,23 @@
   background: rgba(255, 255, 255, 0.05);
   padding: 0.1rem 0.4rem;
   border-radius: 0.25rem;
+}
+
+
+.admin-page h1 {
+  color: #ffffff;
+}
+
+.admin-page p {
+  color: #94a3b8;
+}
+
+/* FIX ADMIN HEADER VISIBILITY */
+.page-header h1 {
+  color: #f9f9fb;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #94a3b8;
 }

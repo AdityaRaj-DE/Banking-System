@@ -20,7 +20,10 @@
 
 .summary-card {
   padding: 2rem;
-  max-width: 400px;
+  max-width: 420px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(30,41,59,0.7), rgba(15,23,42,0.9));
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
 .summary-label {
@@ -30,14 +33,14 @@
 }
 
 .summary-value {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 3rem;
+  font-weight: 800;
   margin: 0.5rem 0 1.5rem;
-  background: linear-gradient(135deg, #fff, var(--primary));
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
 }
-
 .summary-footer {
   display: flex;
   justify-content: space-between;
@@ -62,14 +65,15 @@
 
 .account-card {
   padding: 1.5rem;
-  transition: var(--transition);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(30,41,59,0.6), rgba(15,23,42,0.9));
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .account-card:hover {
-  transform: translateY(-5px);
-  background: rgba(30, 41, 59, 0.9);
-  border-color: var(--primary);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
 .account-card-header {
@@ -91,9 +95,11 @@
 }
 
 .account-balance {
-  font-size: 1.75rem;
+  font-size: 1.9rem;
+  font-weight: 700;
   margin-top: 0.25rem;
 }
+
 
 .account-card-footer {
   margin-top: 1.5rem;
@@ -122,4 +128,121 @@
   padding: 3rem;
   text-align: center;
   color: var(--text-secondary);
+}
+
+.skeleton {
+  height: 120px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #1e293b, #334155, #1e293b);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.dashboard-header h1 {
+  background: linear-gradient(135deg, #fff, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 💳 DEBIT CARD UI */
+.debit-card {
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1e293b, #020617);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
+.debit-card::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(56,189,248,0.2), transparent 60%);
+  top: -50%;
+  left: -50%;
+}
+
+.debit-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+/* Layout */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.bank-name {
+  font-weight: 600;
+}
+
+.card-type {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+/* Card number */
+.card-number {
+  margin: 1.5rem 0;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  font-family: monospace;
+}
+
+/* Balance */
+.card-balance {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Footer */
+.card-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-holder {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* 💳 CHIP DESIGN */
+.card-chip {
+  width: 40px;
+  height: 28px;
+  background: linear-gradient(135deg, #d4af37, #facc15);
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+/* 💠 VISA LOGO */
+.card-brand {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: white;
+  opacity: 0.9;
+}
+
+/* Optional glow */
+.card-brand::after {
+  content: '';
+}
+
+/* Improve spacing */
+.card-number {
+  margin-top: 1rem;
 }

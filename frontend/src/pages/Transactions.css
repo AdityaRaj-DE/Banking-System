@@ -12,8 +12,15 @@
   max-width: 600px;
   padding: 0;
   overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(30,41,59,0.7), rgba(15,23,42,0.95));
+  box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px);
 }
-
+.transactions-page {
+  background: transparent;
+  min-height: 100vh;
+}
 .tabs {
   display: flex;
   background: rgba(255, 255, 255, 0.02);
@@ -33,9 +40,13 @@
 }
 
 .tabs button.active {
-  color: var(--primary);
+  color: #38bdf8;
 }
 
+.tabs button.active::after {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  height: 3px;
+}
 .tabs button.active::after {
   content: '';
   position: absolute;
