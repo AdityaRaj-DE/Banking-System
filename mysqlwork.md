@@ -45,21 +45,7 @@ CREATE TABLE transactions (
     FOREIGN KEY (to_account) REFERENCES accounts(account_id) ON DELETE SET NULL
 );
 
--- Branch Table
-CREATE TABLE branch (
-    branch_id INT AUTO_INCREMENT PRIMARY KEY,
-    branch_name VARCHAR(100) NOT NULL,
-    location VARCHAR(100) NOT NULL
-);
 
--- Employees Table
-CREATE TABLE employees (
-    employee_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    role VARCHAR(50),
-    branch_id INT,
-    FOREIGN KEY (branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL
-);
 
 -- Audit Logs Table
 CREATE TABLE audit_logs (

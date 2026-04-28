@@ -8,8 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
 import accountRoutes from './routes/accountRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
-import branchRoutes from './routes/branchRoutes.js';
-import employeeRoutes from './routes/employeeRoutes.js';
+
 import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
@@ -26,8 +25,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customers', customerRoutes);
 app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
-app.use('/api/v1/branches', branchRoutes);
-app.use('/api/v1/employees', employeeRoutes);
+
 app.use('/api/v1/admin', adminRoutes);
 
 // Health Check

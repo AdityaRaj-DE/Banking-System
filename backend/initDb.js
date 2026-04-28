@@ -33,18 +33,7 @@ const schema = [
     FOREIGN KEY (from_account) REFERENCES accounts(account_id) ON DELETE SET NULL,
     FOREIGN KEY (to_account) REFERENCES accounts(account_id) ON DELETE SET NULL
   );`,
-  `CREATE TABLE IF NOT EXISTS branch (
-    branch_id INT AUTO_INCREMENT PRIMARY KEY,
-    branch_name VARCHAR(100) NOT NULL,
-    location VARCHAR(100) NOT NULL
-  );`,
-  `CREATE TABLE IF NOT EXISTS employees (
-    employee_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    role VARCHAR(50),
-    branch_id INT,
-    FOREIGN KEY (branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL
-  );`,
+
   `CREATE TABLE IF NOT EXISTS audit_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     action VARCHAR(50),

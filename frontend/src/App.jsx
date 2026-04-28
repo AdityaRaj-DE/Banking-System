@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import TransactionsPage from './pages/TransactionsPage';
 import HistoryPage from './pages/HistoryPage';
 import AdminPanel from './pages/AdminPanel';
-import EmployeePanel from './pages/EmployeePanel';
+
 import './index.css';
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/employee" element={<EmployeePanel />} />
+          
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
 

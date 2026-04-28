@@ -27,9 +27,7 @@ const Sidebar = () => {
         <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
           <span>Admin Panel</span>
         </NavLink>
-        <NavLink to="/employee" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-          <span>Employee Panel</span>
-        </NavLink>
+
       </nav>
 
       <div className="sidebar-footer">
