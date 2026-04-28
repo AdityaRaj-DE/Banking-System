@@ -1,149 +1,149 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import pool from './db.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
 app.use(cors());
 app.use(express.json());
 
-// Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Banking Backend is running' });
-});
+// --- Middleware ---
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-// Customers
-app.get('/api/customers', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM customers ORDER BY created_at DESC');
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  if (!token) return res.sendStatus(401);
 
-app.post('/api/customers', async (req, res) => {
-  const { name, email, phone, address } = req.body;
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+// --- Auth Routes ---
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, password, phone, address } = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await pool.query(
-      'INSERT INTO customers (name, email, phone, address) VALUES (?, ?, ?, ?)',
-      [name, email, phone, address]
+      'INSERT INTO customers (name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)',
+      [name, email, hashedPassword, phone, address]
     );
-    res.status(201).json({ id: result.insertId, name, email });
+    res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Accounts
-app.get('/api/accounts', async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const [rows] = await pool.query('SELECT a.*, c.name as customer_name FROM accounts a JOIN customers c ON a.customer_id = c.customer_id');
+    const [users] = await pool.query('SELECT * FROM customers WHERE email = ?', [email]);
+    if (users.length === 0) return res.status(401).json({ message: 'Invalid credentials' });
+
+    const user = users[0];
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) return res.status(401).json({ message: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user.customer_id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token, user: { id: user.customer_id, name: user.name, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Customer Routes ---
+app.get('/api/customers/me', authenticateToken, async (req, res) => {
+  try {
+    const [users] = await pool.query('SELECT customer_id, name, email, phone, address FROM customers WHERE customer_id = ?', [req.user.id]);
+    res.json(users[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Account Routes ---
+app.get('/api/accounts', authenticateToken, async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM accounts WHERE customer_id = ?', [req.user.id]);
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/accounts', async (req, res) => {
-  const { customer_id, account_type, balance } = req.body;
+app.post('/api/accounts', authenticateToken, async (req, res) => {
+  const { account_type, initial_balance } = req.body;
   try {
     const [result] = await pool.query(
       'INSERT INTO accounts (customer_id, account_type, balance, status) VALUES (?, ?, ?, ?)',
-      [customer_id, account_type, balance || 0, 'active']
+      [req.user.id, account_type, initial_balance || 0, 'active']
     );
-    res.status(201).json({ id: result.insertId, customer_id, balance });
+    res.status(201).json({ id: result.insertId, account_type, balance: initial_balance });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Transactions (Transfer/Deposit/Withdraw)
-app.post('/api/transactions', async (req, res) => {
-  const { from_account, to_account, amount, transaction_type } = req.body;
-  const connection = await pool.getConnection();
+// --- Transaction Routes (DBMS Centric) ---
+app.post('/api/transactions/transfer', authenticateToken, async (req, res) => {
+  const { from_account_id, to_account_id, amount } = req.body;
   
   try {
-    await connection.beginTransaction();
+    // Calling the stored procedure for atomicity and performance
+    await pool.query('CALL TransferMoney(?, ?, ?)', [from_account_id, to_account_id, amount]);
+    res.json({ message: 'Transfer successful' });
+  } catch (err) {
+    console.error('Transfer error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    if (transaction_type === 'transfer') {
-      // Deduct from sender
-      await connection.query('UPDATE accounts SET balance = balance - ? WHERE account_id = ?', [amount, from_account]);
-      // Add to receiver
-      await connection.query('UPDATE accounts SET balance = balance + ? WHERE account_id = ?', [amount, to_account]);
-    } else if (transaction_type === 'deposit') {
-      await connection.query('UPDATE accounts SET balance = balance + ? WHERE account_id = ?', [amount, to_account]);
-    } else if (transaction_type === 'withdraw') {
-      await connection.query('UPDATE accounts SET balance = balance - ? WHERE account_id = ?', [amount, from_account]);
-    }
+app.post('/api/transactions/deposit', authenticateToken, async (req, res) => {
+  const { account_id, amount } = req.body;
+  try {
+    await pool.query('CALL DepositMoney(?, ?)', [account_id, amount]);
+    res.json({ message: 'Deposit successful' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    // Record transaction
-    await connection.query(
-      'INSERT INTO transactions (from_account, to_account, amount, transaction_type) VALUES (?, ?, ?, ?)',
-      [from_account || null, to_account || null, amount, transaction_type]
+app.get('/api/transactions/history/:accountId', authenticateToken, async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM transactions WHERE from_account = ? OR to_account = ? ORDER BY created_at DESC',
+      [accountId, accountId]
     );
-
-    await connection.commit();
-    res.json({ message: 'Transaction successful' });
-  } catch (err) {
-    await connection.rollback();
-    res.status(500).json({ error: err.message });
-  } finally {
-    connection.release();
-  }
-});
-
-app.get('/api/transactions', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM transactions ORDER BY created_at DESC LIMIT 50');
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Branches
-app.get('/api/branches', async (req, res) => {
+// --- Audit & Logs (Admin feature simulation) ---
+app.get('/api/admin/audit-logs', authenticateToken, async (req, res) => {
+  // In a real app, check if user is admin
   try {
-    const [rows] = await pool.query('SELECT * FROM branch');
+    const [rows] = await pool.query('SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT 100');
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/branches', async (req, res) => {
-  const { branch_name, location } = req.body;
-  try {
-    const [result] = await pool.query('INSERT INTO branch (branch_name, location) VALUES (?, ?)', [branch_name, location]);
-    res.status(201).json({ id: result.insertId, branch_name });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Employees
-app.get('/api/employees', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT e.*, b.branch_name FROM employees e JOIN branch b ON e.branch_id = b.branch_id');
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/employees', async (req, res) => {
-  const { name, role, branch_id } = req.body;
-  try {
-    const [result] = await pool.query('INSERT INTO employees (name, role, branch_id) VALUES (?, ?, ?)', [name, role, branch_id]);
-    res.status(201).json({ id: result.insertId, name });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// --- Health Check ---
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Banking Backend is running' });
 });
 
 app.listen(PORT, () => {
