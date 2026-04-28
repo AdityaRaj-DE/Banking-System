@@ -42,7 +42,10 @@ const Dashboard = () => {
 
   if (loading) return <div className="loading">Loading accounts...</div>;
 
-  const totalBalance = accounts.reduce((acc, curr) => acc + parseFloat(curr.balance), 0);
+  const totalBalance = accounts.reduce((acc, curr) => {
+    const val = parseFloat(curr.balance);
+    return acc + (isNaN(val) ? 0 : val);
+  }, 0);
 
   return (
     <div className="dashboard-page fade-in">
@@ -76,7 +79,7 @@ const Dashboard = () => {
               </div>
               <div className="account-card-body">
                 <span className="balance-label">Available Balance</span>
-                <h3 className="account-balance">${parseFloat(account.balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                <h3 className="account-balance">${(parseFloat(account.balance) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
               <div className="account-card-footer">
                 <span className={`status-dot ${account.status}`}></span>

@@ -4,8 +4,8 @@ import pool from '../config/db.js';
 
 class TransactionService {
   async deposit(accountId, amount) {
-    if (amount <= 0) {
-      const error = new Error('Amount must be greater than zero');
+    if (isNaN(amount) || amount <= 0) {
+      const error = new Error('Amount must be a valid number greater than zero');
       error.status = 400;
       throw error;
     }
@@ -28,8 +28,8 @@ class TransactionService {
   }
 
   async withdraw(accountId, amount) {
-    if (amount <= 0) {
-      const error = new Error('Amount must be greater than zero');
+    if (isNaN(amount) || amount <= 0) {
+      const error = new Error('Amount must be a valid number greater than zero');
       error.status = 400;
       throw error;
     }
@@ -80,8 +80,8 @@ class TransactionService {
   }
 
   async transfer(fromAccountId, toAccountId, amount) {
-    if (amount <= 0) {
-      const error = new Error('Amount must be greater than zero');
+    if (isNaN(amount) || amount <= 0) {
+      const error = new Error('Amount must be a valid number greater than zero');
       error.status = 400;
       throw error;
     }

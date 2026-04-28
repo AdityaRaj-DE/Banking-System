@@ -5,7 +5,7 @@ class AccountRepository {
     const { customer_id, account_type, balance, status } = accountData;
     const [result] = await pool.query(
       'INSERT INTO accounts (customer_id, account_type, balance, status) VALUES (?, ?, ?, ?)',
-      [customer_id, account_type, balance, status || 'active']
+      [customer_id, account_type, balance || 0, status || 'active']
     );
     return result.insertId;
   }

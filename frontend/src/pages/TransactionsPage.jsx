@@ -31,18 +31,24 @@ const TransactionsPage = () => {
 
   const handleTransfer = async (e) => {
     e.preventDefault();
+    const amount = parseFloat(transferData.amount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount greater than zero');
+      return;
+    }
+
     setLoading(true);
     try {
       await transactionService.transfer({
-        from_account: transferData.from,
-        to_account: transferData.to,
-        amount: parseFloat(transferData.amount)
+        from_account: parseInt(transferData.from),
+        to_account: parseInt(transferData.to),
+        amount: amount
       });
       alert('Transfer successful!');
       setTransferData({ from: '', to: '', amount: '' });
       fetchAccounts();
     } catch (err) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -50,19 +56,26 @@ const TransactionsPage = () => {
 
   const handleAction = async (e) => {
     e.preventDefault();
+    const amount = parseFloat(actionData.amount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount greater than zero');
+      return;
+    }
+
     setLoading(true);
     try {
+      const accountId = parseInt(actionData.account_id);
       if (activeTab === 'deposit') {
-        await transactionService.deposit(actionData.account_id, parseFloat(actionData.amount));
+        await transactionService.deposit(accountId, amount);
         alert('Deposit successful!');
       } else {
-        await transactionService.withdraw(actionData.account_id, parseFloat(actionData.amount));
+        await transactionService.withdraw(accountId, amount);
         alert('Withdrawal successful!');
       }
       setActionData({ account_id: '', amount: '' });
       fetchAccounts();
     } catch (err) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -99,7 +112,7 @@ const TransactionsPage = () => {
                   <option value="" disabled>Select Account</option>
                   {accounts.map(a => (
                     <option key={a.account_id} value={a.account_id} style={{ background: '#0f172a', color: 'white' }}>
-                      #{a.account_id} - {a.account_type.toUpperCase()} (${parseFloat(a.balance).toFixed(2)})
+                      #{a.account_id} - {a.account_type.toUpperCase()} (${(parseFloat(a.balance) || 0).toFixed(2)})
                     </option>
                   ))}
                 </select>
@@ -143,7 +156,7 @@ const TransactionsPage = () => {
                   <option value="" disabled>Select Account</option>
                   {accounts.map(a => (
                     <option key={a.account_id} value={a.account_id} style={{ background: '#0f172a', color: 'white' }}>
-                      #{a.account_id} - {a.account_type.toUpperCase()} (${parseFloat(a.balance).toFixed(2)})
+                      #{a.account_id} - {a.account_type.toUpperCase()} (${(parseFloat(a.balance) || 0).toFixed(2)})
                     </option>
                   ))}
                 </select>

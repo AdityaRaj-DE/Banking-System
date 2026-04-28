@@ -26,7 +26,7 @@ CREATE TABLE accounts (
     account_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     account_type ENUM('savings','current') NOT NULL,
-    balance DECIMAL(12,2) DEFAULT 0 CHECK (balance >= 0),
+    balance DECIMAL(12,2) NOT NULL DEFAULT 0 CHECK (balance >= 0),
     status ENUM('active','blocked','closed') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
