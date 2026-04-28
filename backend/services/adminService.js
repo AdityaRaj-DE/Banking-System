@@ -24,11 +24,13 @@ class AdminService {
     const dbUser = process.env.DB_USER || 'root';
     const dbPass = process.env.DB_PASSWORD || 'Root@12345';
     const dbPort = process.env.DB_PORT || 3307;
+    const dbBinPath = process.env.DB_BIN_PATH || '';
+    const mysqldumpPath = dbBinPath ? path.join(dbBinPath.replace(/^"(.*)"$/, '$1'), 'mysqldump') : 'mysqldump';
     const backupPath = path.join(process.cwd(), 'backup.sql');
 
     return new Promise((resolve, reject) => {
-      // Note: This requires mysqldump to be in the PATH
-      const command = `mysqldump -u ${dbUser} -p${dbPass} --port=${dbPort} ${dbName} > "${backupPath}"`;
+      // Note: This requires mysqldump to be in the PATH or configured via DB_BIN_PATH
+      const command = `"${mysqldumpPath}" -u ${dbUser} -p${dbPass} --port=${dbPort} ${dbName} > "${backupPath}"`;
       
       exec(command, (error, stdout, stderr) => {
         if (error) {
@@ -45,11 +47,13 @@ class AdminService {
     const dbUser = process.env.DB_USER || 'root';
     const dbPass = process.env.DB_PASSWORD || 'Root@12345';
     const dbPort = process.env.DB_PORT || 3307;
+    const dbBinPath = process.env.DB_BIN_PATH || '';
+    const mysqlPath = dbBinPath ? path.join(dbBinPath.replace(/^"(.*)"$/, '$1'), 'mysql') : 'mysql';
     const backupPath = path.join(process.cwd(), 'backup.sql');
 
     return new Promise((resolve, reject) => {
-      // Note: This requires mysql client to be in the PATH
-      const command = `mysql -u ${dbUser} -p${dbPass} --port=${dbPort} ${dbName} < "${backupPath}"`;
+      // Note: This requires mysql client to be in the PATH or configured via DB_BIN_PATH
+      const command = `"${mysqlPath}" -u ${dbUser} -p${dbPass} --port=${dbPort} ${dbName} < "${backupPath}"`;
       
       exec(command, (error, stdout, stderr) => {
         if (error) {

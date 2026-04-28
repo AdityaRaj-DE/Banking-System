@@ -92,6 +92,30 @@ const triggers = [
   BEGIN
     INSERT INTO audit_logs(action, table_name, performed_by)
     VALUES ('INSERT', 'transactions', NEW.from_account);
+  END;`,
+  `DROP TRIGGER IF EXISTS after_customer_insert;`,
+  `CREATE TRIGGER after_customer_insert
+  AFTER INSERT ON customers
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO audit_logs(action, table_name, performed_by)
+    VALUES ('INSERT', 'customers', NEW.customer_id);
+  END;`,
+  `DROP TRIGGER IF EXISTS after_account_insert;`,
+  `CREATE TRIGGER after_account_insert
+  AFTER INSERT ON accounts
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO audit_logs(action, table_name, performed_by)
+    VALUES ('INSERT', 'accounts', NEW.customer_id);
+  END;`,
+  `DROP TRIGGER IF EXISTS after_customer_update;`,
+  `CREATE TRIGGER after_customer_update
+  AFTER UPDATE ON customers
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO audit_logs(action, table_name, performed_by)
+    VALUES ('UPDATE', 'customers', NEW.customer_id);
   END;`
 ];
 
