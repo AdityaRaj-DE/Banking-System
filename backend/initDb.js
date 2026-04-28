@@ -55,31 +55,120 @@ const procedures = [
     IN transfer_amount DECIMAL(12,2)
   )
   BEGIN
+    DECLARE sender_status ENUM('active','blocked','closed');
+    DECLARE receiver_status ENUM('active','blocked','closed');
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
+
     START TRANSACTION;
-    IF (SELECT balance FROM accounts WHERE account_id = sender_id FOR UPDATE) < transfer_amount THEN
+
+    -- Lock accounts in consistent order to prevent deadlocks
+    IF sender_id < receiver_id THEN
+        SELECT status INTO sender_status FROM accounts WHERE account_id = sender_id FOR UPDATE;
+        SELECT status INTO receiver_status FROM accounts WHERE account_id = receiver_id FOR UPDATE;
+    ELSE
+        SELECT status INTO receiver_status FROM accounts WHERE account_id = receiver_id FOR UPDATE;
+        SELECT status INTO sender_status FROM accounts WHERE account_id = sender_id FOR UPDATE;
+    END IF;
+
+    IF sender_status IS NULL OR receiver_status IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or both accounts not found';
+    END IF;
+
+    IF sender_status != 'active' OR receiver_status != 'active' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or both accounts are not active';
+    END IF;
+
+    IF (SELECT balance FROM accounts WHERE account_id = sender_id) < transfer_amount THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance';
     END IF;
+
     UPDATE accounts SET balance = balance - transfer_amount WHERE account_id = sender_id;
     UPDATE accounts SET balance = balance + transfer_amount WHERE account_id = receiver_id;
+
     INSERT INTO transactions (from_account, to_account, amount, transaction_type, status)
     VALUES (sender_id, receiver_id, transfer_amount, 'transfer', 'completed');
+
     COMMIT;
   END;`,
+
   `DROP PROCEDURE IF EXISTS DepositMoney;`,
   `CREATE PROCEDURE DepositMoney(
     IN acc_id INT,
     IN dep_amount DECIMAL(12,2)
   )
   BEGIN
+    DECLARE acc_status ENUM('active','blocked','closed');
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
     START TRANSACTION;
+
+    -- Lock the account row
+    SELECT status INTO acc_status FROM accounts WHERE account_id = acc_id FOR UPDATE;
+
+    IF acc_status IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account not found';
+    END IF;
+
+    IF acc_status != 'active' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account is not active';
+    END IF;
+
     UPDATE accounts SET balance = balance + dep_amount WHERE account_id = acc_id;
+
     INSERT INTO transactions (to_account, amount, transaction_type, status)
     VALUES (acc_id, dep_amount, 'deposit', 'completed');
+
+    COMMIT;
+  END;`,
+
+  `DROP PROCEDURE IF EXISTS WithdrawMoney;`,
+  `CREATE PROCEDURE WithdrawMoney(
+    IN acc_id INT,
+    IN withdraw_amount DECIMAL(12,2)
+  )
+  BEGIN
+    DECLARE acc_status ENUM('active','blocked','closed');
+    DECLARE current_balance DECIMAL(12,2);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    -- Lock the account row and check balance/status
+    SELECT balance, status INTO current_balance, acc_status
+    FROM accounts WHERE account_id = acc_id FOR UPDATE;
+
+    IF acc_status IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account not found';
+    END IF;
+
+    IF acc_status != 'active' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account is not active';
+    END IF;
+
+    IF current_balance < withdraw_amount THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance';
+    END IF;
+
+    UPDATE accounts SET balance = balance - withdraw_amount WHERE account_id = acc_id;
+
+    INSERT INTO transactions (from_account, amount, transaction_type, status)
+    VALUES (acc_id, withdraw_amount, 'withdraw', 'completed');
+
     COMMIT;
   END;`
 ];
