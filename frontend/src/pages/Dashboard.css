@@ -1,0 +1,125 @@
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  color: var(--text-secondary);
+}
+
+.summary-section {
+  margin-bottom: 3rem;
+}
+
+.summary-card {
+  padding: 2rem;
+  max-width: 400px;
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1.5rem;
+  background: linear-gradient(135deg, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.summary-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-info {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.accounts-section h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.account-card {
+  padding: 1.5rem;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.account-card:hover {
+  transform: translateY(-5px);
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--primary);
+}
+
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.account-id {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+.balance-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.account-balance {
+  font-size: 1.75rem;
+  margin-top: 0.25rem;
+}
+
+.account-card-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.active { background: var(--success); }
+.status-dot.blocked { background: var(--warning); }
+.status-dot.closed { background: var(--error); }
+
+.status-text {
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
