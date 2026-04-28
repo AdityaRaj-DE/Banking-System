@@ -11,6 +11,11 @@ class TransactionRepository {
     return result;
   }
 
+  async withdraw(accountId, amount) {
+    const [result] = await pool.query('CALL WithdrawMoney(?, ?)', [accountId, amount]);
+    return result;
+  }
+
   async findByAccountId(accountId) {
     const [rows] = await pool.query(
       'SELECT * FROM transactions WHERE from_account = ? OR to_account = ? ORDER BY created_at DESC',
