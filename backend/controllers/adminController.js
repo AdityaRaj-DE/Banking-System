@@ -11,6 +11,15 @@ class AdminController {
     }
   }
 
+  async getAnalytics(req, res, next) {
+    try {
+      const data = await adminService.getAnalytics();
+      successResponse(res, data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async analyzeQuery(req, res, next) {
     try {
       const { query } = req.query;

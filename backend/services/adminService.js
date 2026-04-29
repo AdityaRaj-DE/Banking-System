@@ -10,6 +10,10 @@ class AdminService {
     return await adminRepository.getAuditLogs();
   }
 
+  async getAnalytics() {
+    return await adminRepository.getAnalyticsData();
+  }
+
   async analyzeQuery(query) {
     if (!query) {
       const error = new Error('Query is required');

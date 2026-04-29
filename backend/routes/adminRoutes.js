@@ -10,5 +10,6 @@ router.post('/backup', adminController.backup);
 router.post('/restore', adminController.restore);
 router.get('/query-analysis', adminController.analyzeQuery);
 router.get('/audit-logs', adminController.getAuditLogs);
+router.get('/analytics', adminController.getAnalytics);
 
 export default router;
