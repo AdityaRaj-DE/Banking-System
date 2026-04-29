@@ -38,6 +38,27 @@ class AccountController {
       next(err);
     }
   }
+
+  async getStats(req, res, next) {
+    try {
+      const customerId = req.params.id;
+      console.log(`Fetching stats for customer: ${customerId}`);
+      const data = await accountService.getCustomerStats(customerId);
+      successResponse(res, data);
+    } catch (err) {
+      console.error(`Stats error for customer ${req.params.id}:`, err.message);
+      next(err);
+    }
+  }
+
+  async getAccountStats(req, res, next) {
+    try {
+      const data = await accountService.getAccountStats(req.params.id);
+      successResponse(res, data);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new AccountController();

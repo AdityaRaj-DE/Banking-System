@@ -13,13 +13,20 @@ const TransactionsPage = () => {
   const [accounts, setAccounts] = useState([]);
   const [activeTab, setActiveTab] = useState('transfer');
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({
+    dailyTransferUsage: 0,
+    monthlyWithdrawalUsage: 0
+  });
 
   // Form states
   const [transferData, setTransferData] = useState({ from: '', to: '', amount: '', note: '' });
   const [actionData, setActionData] = useState({ account_id: '', amount: '' });
 
   useEffect(() => {
-    if (user) fetchAccounts();
+    if (user) {
+      fetchAccounts();
+      fetchStats();
+    }
     
     const params = new URLSearchParams(location.search);
     const tab = params.get('tab');
@@ -43,6 +50,16 @@ const TransactionsPage = () => {
     } catch (err) {
       console.error(err);
       showNotification("Failed to fetch accounts", "error");
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const customerId = user.id || user.customer_id;
+      const res = await accountService.getStats(customerId);
+      setStats(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -153,10 +170,6 @@ const TransactionsPage = () => {
                       required
                     />
                   </div>
-                  <div className="quick-recipients">
-                    <div className="recipient-chip"><div className="recipient-avatar">AJ</div> Sarah Jenkins</div>
-                    <div className="recipient-chip"><div className="recipient-avatar">AW</div> Apex Wealth</div>
-                  </div>
                 </div>
 
                 <div className="input-group">
@@ -196,10 +209,6 @@ const TransactionsPage = () => {
                 <div className="review-item">
                   <span className="review-label">Transfer Date</span>
                   <span className="review-value">Today, {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
-                </div>
-                <div className="review-item">
-                  <span className="review-label">Transfer Fee</span>
-                  <span className="review-value">₹0.00</span>
                 </div>
                 <div className="review-item">
                   <span className="review-label">Estimated Arrival</span>
@@ -288,26 +297,21 @@ const TransactionsPage = () => {
           </div>
 
           <div className="card-panel limit-card">
-            <h4>Daily Limits</h4>
+            <h4>Usage Limits</h4>
             <div className="limit-item-box">
               <div className="limit-item">
-                <span className="limit-label">Daily Transfer Limit</span>
-                <span className="limit-value">₹50,000 / ₹1,00,000</span>
+                <span className="limit-label">Daily Transfer Usage</span>
+                <span className="limit-value">₹{parseFloat(stats.dailyTransferUsage || 0).toLocaleString()} / ₹1,00,000</span>
               </div>
-              <div className="limit-bar-bg"><div className="limit-bar-fill" style={{ width: '50%' }}></div></div>
+              <div className="limit-bar-bg"><div className="limit-bar-fill" style={{ width: `${Math.min((stats.dailyTransferUsage / 100000) * 100, 100)}%` }}></div></div>
             </div>
             
             <div className="limit-item-box" style={{ marginTop: '2rem' }}>
               <div className="limit-item">
-                <span className="limit-label">Monthly Withdrawal Limit</span>
-                <span className="limit-value">₹2,00,000 / ₹5,00,000</span>
+                <span className="limit-label">Monthly Withdrawal Usage</span>
+                <span className="limit-value">₹{parseFloat(stats.monthlyWithdrawalUsage || 0).toLocaleString()} / ₹5,00,000</span>
               </div>
-              <div className="limit-bar-bg"><div className="limit-bar-fill" style={{ width: '40%' }}></div></div>
-            </div>
-
-            <div className="info-alert" style={{ marginTop: '2rem' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-              <p>Contact support if you need to increase your transaction limits.</p>
+              <div className="limit-bar-bg"><div className="limit-bar-fill" style={{ width: `${Math.min((stats.monthlyWithdrawalUsage / 500000) * 100, 100)}%` }}></div></div>
             </div>
           </div>
         </div>

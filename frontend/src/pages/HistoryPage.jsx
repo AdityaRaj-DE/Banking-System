@@ -11,6 +11,7 @@ const HistoryPage = () => {
   const [selectedAccount, setSelectedAccount] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterText, setFilterText] = useState('');
 
   useEffect(() => {
     if (user) fetchAccounts();
@@ -51,6 +52,16 @@ const HistoryPage = () => {
     if (id) fetchHistory(id);
   };
 
+  const filteredTransactions = transactions.filter(t => {
+    const desc = t.from_account && t.to_account ? 
+      (String(t.from_account) === String(selectedAccount) ? `Sent to #${t.to_account}` : `Received from #${t.from_account}`) : 
+      (t.transaction_type === 'deposit' ? 'Cash Deposit' : 'Cash Withdrawal');
+    
+    return desc.toLowerCase().includes(filterText.toLowerCase()) || 
+           t.transaction_type.toLowerCase().includes(filterText.toLowerCase()) ||
+           String(t.amount).includes(filterText);
+  });
+
   return (
     <div className="history-page fade-in">
       <header className="page-header" style={{ marginBottom: '2rem' }}>
@@ -81,6 +92,8 @@ const HistoryPage = () => {
               className="input-field" 
               placeholder="Filter by description..." 
               style={{ width: '250px', paddingLeft: '2.5rem' }} 
+              value={filterText}
+              onChange={e => setFilterText(e.target.value)}
             />
           </div>
         </div>
@@ -105,7 +118,7 @@ const HistoryPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {transactions.length > 0 ? transactions.map(t => (
+                {filteredTransactions.length > 0 ? filteredTransactions.map(t => (
                   <tr key={t.transaction_id} className="table-row-hover" style={{ borderBottom: '1px solid var(--background)' }}>
                     <td style={{ padding: '1.5rem' }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>

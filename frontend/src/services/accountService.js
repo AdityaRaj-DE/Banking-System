@@ -8,6 +8,8 @@ const accountService = {
   // Actually, I'll just use the customer ID from the auth user object.
   getAccountsByCustomerId: (id) => api.get(`/accounts/customer/${id}`),
   getAccountById: (id) => api.get(`/accounts/${id}`),
+  getStats: (id) => api.get(`/accounts/customer/${id}/stats`),
+  getAccountStats: (id) => api.get(`/accounts/${id}/stats`),
   updateStatus: (id, status) => api.patch(`/accounts/${id}/status`, { status }),
 };
 

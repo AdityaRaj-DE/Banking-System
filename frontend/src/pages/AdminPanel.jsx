@@ -88,9 +88,34 @@ const AdminPanel = () => {
               <button type="submit" className="primary-btn">Analyze</button>
             </form>
             {queryResult && (
-              <pre className="query-result">
-                {JSON.stringify(queryResult, null, 2)}
-              </pre>
+              <div className="analysis-results-container">
+                <table className="analysis-table">
+                  <thead>
+                    <tr>
+                      {Object.keys(queryResult[0] || {}).map(key => (
+                        <th key={key}>{key.replace(/_/g, ' ')}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.isArray(queryResult) ? queryResult.map((row, idx) => (
+                      <tr key={idx}>
+                        {Object.values(row).map((val, i) => (
+                          <td key={i}>
+                            {String(val)}
+                          </td>
+                        ))}
+                      </tr>
+                    )) : (
+                      <tr>
+                        {Object.values(queryResult).map((val, i) => (
+                          <td key={i}>{String(val)}</td>
+                        ))}
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </section>

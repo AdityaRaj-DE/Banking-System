@@ -20,6 +20,21 @@ const Dashboard = () => {
   const [newAccountType, setNewAccountType] = useState('savings');
 
   const [showAllAccounts, setShowAllAccounts] = useState(false);
+  const [stats, setStats] = useState({
+    totalBalance: 0,
+    monthlyInflow: 0,
+    monthlyOutflow: 0,
+    balanceTrend: 0,
+    lastTransaction: null
+  });
+  const [selectedAccountId, setSelectedAccountId] = useState(null);
+  const [isAccountView, setIsAccountView] = useState(false);
+  const [accountStats, setAccountStats] = useState({
+    balance: 0,
+    monthlyInflow: 0,
+    monthlyOutflow: 0,
+    lastTransaction: null
+  });
 
   useEffect(() => {
     if (user) {
@@ -39,11 +54,44 @@ const Dashboard = () => {
         const txRes = await transactionService.getHistory(accs[0].account_id);
         setRecentTransactions(Array.isArray(txRes.data) ? txRes.data.slice(0, 10) : []);
       }
+
+      const statsRes = await accountService.getStats(customerId);
+      setStats(statsRes.data);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
       showNotification("Failed to load dashboard data", "error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAccountSpecificData = async (accountId) => {
+    try {
+      const txRes = await transactionService.getHistory(accountId);
+      setRecentTransactions(Array.isArray(txRes.data) ? txRes.data.slice(0, 10) : []);
+
+      const statsRes = await accountService.getAccountStats(accountId);
+      setAccountStats(statsRes.data);
+    } catch (err) {
+      console.error("Error fetching account stats:", err);
+    }
+  };
+
+  const handleAccountClick = (accountId) => {
+    if (selectedAccountId === accountId) {
+      // Toggle back to total view
+      setSelectedAccountId(null);
+      setIsAccountView(false);
+      // Refresh total transactions
+      if (accounts.length > 0) {
+        transactionService.getHistory(accounts[0].account_id).then(res => {
+           setRecentTransactions(Array.isArray(res.data) ? res.data.slice(0, 10) : []);
+        });
+      }
+    } else {
+      setSelectedAccountId(accountId);
+      setIsAccountView(true);
+      fetchAccountSpecificData(accountId);
     }
   };
 
@@ -82,12 +130,7 @@ const Dashboard = () => {
       }).concat([{ name: 'Today', value: totalBalance }]);
     }
     return [
-      { name: 'Mon', value: totalBalance * 0.9 },
-      { name: 'Tue', value: totalBalance * 0.95 },
-      { name: 'Wed', value: totalBalance * 0.92 },
-      { name: 'Thu', value: totalBalance * 0.98 },
-      { name: 'Fri', value: totalBalance * 1.05 },
-      { name: 'Sat', value: totalBalance * 1.02 },
+      { name: 'Start', value: 0 },
       { name: 'Today', value: totalBalance },
     ];
   }, [recentTransactions, totalBalance]);
@@ -146,10 +189,14 @@ const Dashboard = () => {
           {/* TOTAL BALANCE CARD WITH CHART */}
           <div className="balance-card-wrapper">
             <div className="balance-card-info">
-              <span className="balance-label">Total Balance</span>
+              <span className="balance-label">{isAccountView ? 'Account Balance' : 'Total Balance'}</span>
               <div className="balance-amount">
-                ₹{totalBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                <span className="balance-trend">↗ +4.2%</span>
+                ₹{(isAccountView ? Number(accountStats.balance || 0) : totalBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                {!isAccountView && (
+                  <span className={`balance-trend ${stats.balanceTrend >= 0 ? 'positive' : 'negative'}`}>
+                    {stats.balanceTrend >= 0 ? '↗' : '↘'} {Math.abs(stats.balanceTrend).toFixed(1)}%
+                  </span>
+                )}
               </div>
             </div>
             <div className="balance-chart">
@@ -192,13 +239,14 @@ const Dashboard = () => {
                   </button>
                 )}
               </div>
-              <button className="primary-btn btn-sm" onClick={() => setIsCreatingAccount(true)} style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
-                + Open New Account
-              </button>
             </div>
             <div className={`accounts-row ${showAllAccounts ? 'expanded' : ''}`}>
               {accounts.length > 0 ? displayedAccounts.map((acc, index) => (
-                <div key={acc.account_id} className={`account-mini-card ${index === 0 ? 'active' : ''}`} onClick={() => navigate('/history')}>
+                <div 
+                  key={acc.account_id} 
+                  className={`account-mini-card ${selectedAccountId === acc.account_id ? 'active' : ''}`} 
+                  onClick={() => handleAccountClick(acc.account_id)}
+                >
                   <div className="card-top">
                     <p className="account-type-label">{acc.account_type}</p>
                     <div className="card-icon">
@@ -208,7 +256,9 @@ const Dashboard = () => {
                   <h4>₹{Number(acc.balance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</h4>
                   <div className="card-footer">
                     <p className="text-sm">**** {String(acc.account_id).slice(-4)}</p>
-                    <span className="badge badge-primary" style={{ fontSize: '10px' }}>Active</span>
+                    <span className={`badge ${acc.status === 'active' ? 'badge-primary' : 'badge-error'}`} style={{ fontSize: '10px' }}>
+                      {acc.status.toUpperCase()}
+                    </span>
                   </div>
                 </div>
               )) : (
@@ -221,7 +271,7 @@ const Dashboard = () => {
 
           <section className="transactions-section">
             <div className="section-header">
-              <h3>Recent Transactions</h3>
+              <h3>{isAccountView ? 'Account Transactions' : 'Recent Transactions'}</h3>
               <button className="view-all-btn" onClick={() => navigate('/history')}>View All</button>
             </div>
             <div className="card-panel transactions-container">
@@ -273,37 +323,36 @@ const Dashboard = () => {
                 </div>
                 <span>Deposit Money</span>
               </button>
+              <button className="quick-action-item" onClick={() => setIsCreatingAccount(true)}>
+                <div className="item-icon account">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+                </div>
+                <span>Open New Account</span>
+              </button>
             </div>
             <div className="last-transfer-info">
-              <p className="text-sm">Last transfer: <span>Today, 09:42 AM</span></p>
+              <p className="text-sm">Last activity: <span>{(isAccountView ? accountStats.lastTransaction : stats.lastTransaction) ? new Date(isAccountView ? accountStats.lastTransaction : stats.lastTransaction).toLocaleString() : 'No activity'}</span></p>
             </div>
           </div>
 
           <div className="card-panel budget-widget">
-            <h3>Monthly Cash Flow</h3>
+            <h3>{isAccountView ? 'Account Cash Flow' : 'Monthly Cash Flow'}</h3>
             <div className="flow-item">
               <div className="flow-label">
                 <span>Inflow</span>
-                <span className="positive">+₹12,400</span>
+                <span className="positive">+₹{parseFloat(isAccountView ? accountStats.monthlyInflow : stats.monthlyInflow || 0).toLocaleString()}</span>
               </div>
-              <div className="flow-bar"><div className="flow-fill inflow" style={{ width: '70%' }}></div></div>
+              <div className="flow-bar"><div className="flow-fill inflow" style={{ width: (isAccountView ? accountStats.monthlyInflow : stats.monthlyInflow) > 0 ? '100%' : '0%' }}></div></div>
             </div>
             <div className="flow-item">
               <div className="flow-label">
                 <span>Outflow</span>
-                <span className="negative">-₹8,200</span>
+                <span className="negative">-₹{parseFloat(isAccountView ? accountStats.monthlyOutflow : stats.monthlyOutflow || 0).toLocaleString()}</span>
               </div>
-              <div className="flow-bar"><div className="flow-fill outflow" style={{ width: '45%' }}></div></div>
+              <div className="flow-bar"><div className="flow-fill outflow" style={{ width: (isAccountView ? accountStats.monthlyOutflow : stats.monthlyOutflow) > 0 ? '100%' : '0%' }}></div></div>
             </div>
-            <p className="text-sm mt-4">Your spending is down 12% compared to last month. Keep it up!</p>
           </div>
 
-          <div className="premium-upsell">
-            <div className="upsell-icon">💎</div>
-            <h4>Unlock Premium</h4>
-            <p className="text-sm">Get 5% cashback on all transactions and priority support.</p>
-            <button className="secondary-btn btn-sm" style={{ marginTop: '1rem', width: '100%', borderColor: 'white', color: 'white' }}>Upgrade Now</button>
-          </div>
         </div>
       </div>
 

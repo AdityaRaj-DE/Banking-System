@@ -55,21 +55,59 @@
   font-size: 0.85rem;
 }
 
-.query-result {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: var(--secondary);
-  color: #a5f791;
-  border-radius: var(--radius-md);
-  font-size: 0.75rem;
-  max-height: 300px;
-  overflow: auto;
+.analysis-results-container {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  background: white;
+}
+
+.analysis-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  min-width: 600px;
+}
+
+.analysis-table th {
+  background-color: var(--background);
+  color: var(--secondary);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--outline-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.analysis-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--outline-variant);
+  color: var(--secondary);
+  font-family: 'Fira Code', monospace;
+}
+
+.analysis-table tr:hover {
+  background-color: rgba(77, 68, 181, 0.02);
 }
 
 .logs-container {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.logs-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.logs-container::-webkit-scrollbar-thumb {
+  background-color: var(--outline-variant);
+  border-radius: 3px;
 }
 
 .log-item {
@@ -79,7 +117,8 @@
   border-radius: var(--radius-md);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.75rem;
   font-size: 0.85rem;
   transition: var(--transition);
 }
@@ -87,16 +126,19 @@
 .log-item:hover {
   border-color: var(--primary);
   background-color: var(--surface);
+  transform: translateX(4px);
 }
 
 .log-time {
   color: var(--on-surface-variant);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .log-action {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
 .log-table {
@@ -105,10 +147,11 @@
 
 .log-user {
   margin-left: auto;
-  font-family: monospace;
+  font-family: 'Fira Code', monospace;
   background-color: var(--primary-container);
   color: var(--primary);
-  padding: 0.125rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.75rem;
 }

@@ -183,6 +183,7 @@
 
 .item-icon.transfer { background: rgba(77, 68, 181, 0.1); color: var(--primary); }
 .item-icon.deposit { background: rgba(1, 87, 1, 0.1); color: var(--success); }
+.item-icon.account { background: rgba(100, 116, 139, 0.1); color: #64748b; }
 
 .quick-action-item span {
   font-weight: 600;

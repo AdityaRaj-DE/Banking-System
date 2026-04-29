@@ -44,6 +44,26 @@ class AccountService {
     }
     return await accountRepository.findById(id);
   }
+
+  async getCustomerStats(customerId) {
+    const customer = await customerRepository.findById(customerId);
+    if (!customer) {
+      const error = new Error('Customer not found');
+      error.status = 404;
+      throw error;
+    }
+    return await accountRepository.getStatsByCustomerId(customerId);
+  }
+
+  async getAccountStats(accountId) {
+    const account = await accountRepository.findById(accountId);
+    if (!account) {
+      const error = new Error('Account not found');
+      error.status = 404;
+      throw error;
+    }
+    return await accountRepository.getStatsByAccountId(accountId);
+  }
 }
 
 export default new AccountService();

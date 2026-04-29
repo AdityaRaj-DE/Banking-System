@@ -19,6 +19,8 @@ const transactionSchema = {
 
 router.post('/', validate(createAccountSchema), accountController.create);
 router.get('/:id', accountController.getById);
+router.get('/:id/stats', accountController.getAccountStats);
+router.get('/customer/:id/stats', accountController.getStats);
 router.get('/customer/:id', accountController.getByCustomerId);
 router.patch('/:id/status', accountController.updateStatus);
 
