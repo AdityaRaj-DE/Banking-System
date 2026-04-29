@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [accounts, setAccounts] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [newAccountType, setNewAccountType] = useState('savings');
 
@@ -135,11 +134,6 @@ const Dashboard = () => {
     ];
   }, [recentTransactions, totalBalance]);
 
-  const filteredTransactions = recentTransactions.filter(tx => 
-    tx.transaction_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (tx.from_account && String(tx.from_account).includes(searchTerm)) ||
-    (tx.to_account && String(tx.to_account).includes(searchTerm))
-  );
 
   const displayedAccounts = showAllAccounts ? accounts : accounts.slice(0, 3);
 
@@ -153,28 +147,6 @@ const Dashboard = () => {
         <div>
           <h1>Dashboard</h1>
           <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>Welcome back, {user?.name}</p>
-        </div>
-        <div className="search-bar">
-          <div className="input-with-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input 
-              type="text" 
-              className="input-field" 
-              placeholder="Search transactions..." 
-              style={{ width: '300px', paddingLeft: '2.5rem', paddingRight: '2.5rem' }} 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button 
-                className="clear-search-btn" 
-                onClick={() => setSearchTerm('')}
-                style={{ position: 'absolute', right: '0.75rem', color: 'var(--on-surface-variant)', opacity: 0.7 }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            )}
-          </div>
         </div>
       </header>
 
@@ -275,9 +247,9 @@ const Dashboard = () => {
               <button className="view-all-btn" onClick={() => navigate('/history')}>View All</button>
             </div>
             <div className="card-panel transactions-container">
-              {filteredTransactions.length > 0 ? (
+              {recentTransactions.length > 0 ? (
                 <div className="transactions-list">
-                  {filteredTransactions.map(tx => (
+                  {recentTransactions.map(tx => (
                     <div key={tx.transaction_id} className="transaction-item">
                       <div className={`transaction-icon-box ${tx.transaction_type}`}>
                         {tx.transaction_type === 'deposit' ? (
@@ -300,7 +272,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--on-surface-variant)' }}>
-                  {searchTerm ? 'No matching transactions found.' : 'No recent transactions.'}
+                  No recent transactions.
                 </div>
               )}
             </div>

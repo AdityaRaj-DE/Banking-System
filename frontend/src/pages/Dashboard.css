@@ -17,19 +17,6 @@
   color: var(--secondary);
 }
 
-.input-with-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-with-icon svg {
-  position: absolute;
-  left: 1rem;
-  color: var(--on-surface-variant);
-  pointer-events: none;
-}
-
 .dashboard-top-nav {
   display: flex;
   align-items: center;
